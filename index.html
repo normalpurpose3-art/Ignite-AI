@@ -10,7 +10,8 @@
         .sidebar { background: #050505; border-right: 1px solid #1a1a1a; }
         .ignite-gradient { background: linear-gradient(135deg, #FF4B2B, #FF416C); }
         .workspace-main { background: radial-gradient(circle at top right, #1a0f0a, #0a0a0a 45%); }
-        iframe { border: none; width: 100%; height: 100%; border-radius: 30px; }
+        .glass-chat { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="flex h-screen">
@@ -18,23 +19,101 @@
     <aside class="sidebar w-72 p-6 hidden md:flex flex-col shadow-2xl">
         <div class="flex items-center gap-3 mb-10 p-2">
             <div class="w-10 h-10 ignite-gradient rounded-xl flex items-center justify-center shadow-lg">🔥</div>
-            <span class="font-bold text-lg tracking-tight">Ignite Workspace</span>
+            <span class="font-bold text-lg tracking-tight text-white">Ignite Workspace</span>
         </div>
-        <button class="ignite-gradient w-full py-4 rounded-2xl font-bold text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
-            <span class="text-xl">+</span> New Session
+        <button onclick="location.reload()" class="ignite-gradient w-full py-4 rounded-2xl font-bold text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            + New Session
         </button>
         <nav class="mt-12 flex-1">
-            <h3 class="text-[10px] text-zinc-600 uppercase tracking-[0.2em] font-bold mb-6">Recent History</h3>
-            <div class="text-zinc-500 text-sm p-3 bg-white/5 rounded-xl border border-white/5 italic">No history found</div>
+            <h3 class="text-[10px] text-zinc-600 uppercase tracking-[0.2em] font-bold mb-6 italic">Neural History</h3>
+            <div class="text-zinc-500 text-xs p-3 bg-white/5 rounded-xl border border-white/5 italic">No sessions saved</div>
         </nav>
     </aside>
 
-    <main class="flex-1 flex flex-col workspace-main">
+    <main class="flex-1 flex flex-col workspace-main relative">
         <header class="flex justify-between items-center px-8 py-8">
             <div>
-                <h2 class="text-3xl font-bold tracking-tight">Welcome, <span class="text-orange-500 italic font-black">Professional</span></h2>
-                <p class="text-zinc-500 text-[10px] mt-1 tracking-widest uppercase italic">Secure Neural Connection Established</p>
+                <h2 class="text-3xl font-bold tracking-tight text-white italic">Welcome, <span class="text-orange-500">Professional</span></h2>
+                <p class="text-zinc-500 text-[10px] mt-1 tracking-widest uppercase italic">System Status: Neural Link Active</p>
             </div>
+            <div class="w-12 h-12 bg-zinc-800 rounded-full border-2 border-orange-500/50 flex items-center justify-center font-bold">N</div>
+        </header>
+
+        <div class="flex-1 px-8 flex flex-col overflow-hidden">
+            <div id="chat-box" class="flex-1 overflow-y-auto space-y-4 p-4 no-scrollbar">
+                <div class="text-zinc-500 text-xs italic text-center mb-4">Encrypted connection established with normalpurpose3/Ignite-AI</div>
+            </div>
+
+            <div class="py-6">
+                <div class="glass-chat rounded-[2rem] p-2 flex items-center gap-2 shadow-2xl">
+                    <input type="text" id="user-input" placeholder="Communicate with Ignite AI..." 
+                        class="flex-1 bg-transparent px-6 py-4 outline-none text-white placeholder-zinc-600">
+                    <button onclick="sendMessage()" class="ignite-gradient w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-all">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- THIS IS THE JAVASCRIPT LOGIC ---
+        const MODEL_ID = "normalpurpose3/Ignite-AI"; 
+        const HF_TOKEN = "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"; // <--- PASTE TOKEN HERE
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const chatBox = document.getElementById('chat-box');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // 1. Add User Bubble
+            chatBox.innerHTML += `<div class="flex justify-end mb-4"><div class="ignite-gradient px-6 py-3 rounded-3xl rounded-tr-none shadow-lg max-w-[80%]">${text}</div></div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // 2. Add Thinking Bubble
+            const aiId = "ai-" + Date.now();
+            chatBox.innerHTML += `<div class="flex justify-start mb-4"><div id="${aiId}" class="bg-white/5 px-6 py-3 rounded-3xl rounded-tl-none border border-white/10 text-zinc-300 max-w-[80%] animate-pulse italic">Neural processing...</div></div>`;
+
+            try {
+                const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
+                    headers: { 
+                        "Authorization": `Bearer ${HF_TOKEN}`,
+                        "Content-Type": "application/json" 
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ inputs: text }),
+                });
+
+                const result = await response.json();
+                
+                // Handling the result
+                let aiText = "";
+                if (Array.isArray(result)) {
+                    aiText = result[0].generated_text || result[0].summary_text;
+                } else if (result.error) {
+                    aiText = "Model is waking up. Please wait 15 seconds and try again.";
+                } else {
+                    aiText = result.generated_text || "System Error: No response.";
+                }
+
+                document.getElementById(aiId).classList.remove('animate-pulse', 'italic');
+                document.getElementById(aiId).innerText = aiText;
+
+            } catch (error) {
+                document.getElementById(aiId).innerHTML = "<span class='text-red-500 font-bold italic'>Link Failed: Check your API Key</span>";
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Support for Enter Key
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>            </div>
             <div class="w-12 h-12 bg-zinc-800 rounded-full border-2 border-orange-500/50 flex items-center justify-center font-bold">N</div>
         </header>
 
