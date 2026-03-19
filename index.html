@@ -3,41 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ignite Pro | AI</title>
+    <title>Ignite Workspace | Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: radial-gradient(circle at top right, #FF4B2B, #1a1a1a 50%); min-height: 100vh; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .ignite-gradient { background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        body { background: #0a0a0a; color: white; overflow: hidden; font-family: sans-serif; }
+        .sidebar { background: #050505; border-right: 1px solid #1a1a1a; }
+        .ignite-gradient { background: linear-gradient(135deg, #FF4B2B, #FF416C); }
+        .workspace-main { background: radial-gradient(circle at top right, #1a0f0a, #0a0a0a 45%); }
+        iframe { border: none; width: 100%; height: 100%; border-radius: 30px; }
     </style>
 </head>
-<body class="text-white font-sans flex flex-col items-center p-4">
-    <div class="w-full max-w-3xl flex flex-col h-[92vh]">
-        <header class="flex justify-between items-center p-6 glass rounded-3xl mb-4 shadow-2xl">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 ignite-gradient rounded-xl flex items-center justify-center shadow-lg">🔥</div>
-                <h1 class="text-xl font-bold tracking-tight text-white">IGNITE <span class="text-orange-500">PRO</span></h1>
+<body class="flex h-screen">
+
+    <aside class="sidebar w-72 p-6 hidden md:flex flex-col shadow-2xl">
+        <div class="flex items-center gap-3 mb-10 p-2">
+            <div class="w-10 h-10 ignite-gradient rounded-xl flex items-center justify-center shadow-lg">🔥</div>
+            <span class="font-bold text-lg tracking-tight">Ignite Workspace</span>
+        </div>
+        <button class="ignite-gradient w-full py-4 rounded-2xl font-bold text-sm shadow-xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+            <span class="text-xl">+</span> New Session
+        </button>
+        <nav class="mt-12 flex-1">
+            <h3 class="text-[10px] text-zinc-600 uppercase tracking-[0.2em] font-bold mb-6">Recent History</h3>
+            <div class="text-zinc-500 text-sm p-3 bg-white/5 rounded-xl border border-white/5 italic">No history found</div>
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col workspace-main">
+        <header class="flex justify-between items-center px-8 py-8">
+            <div>
+                <h2 class="text-3xl font-bold tracking-tight">Welcome, <span class="text-orange-500 italic font-black">Professional</span></h2>
+                <p class="text-zinc-500 text-[10px] mt-1 tracking-widest uppercase italic">Secure Neural Connection Established</p>
             </div>
-            <div id="status" class="flex items-center gap-2 text-[10px] uppercase tracking-widest text-zinc-400">
-                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> Ready
-            </div>
+            <div class="w-12 h-12 bg-zinc-800 rounded-full border-2 border-orange-500/50 flex items-center justify-center font-bold">N</div>
         </header>
 
-        <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-6 glass rounded-[2rem] mb-4 no-scrollbar border-white/5 shadow-inner">
-            <div class="bg-white/5 p-5 rounded-2xl border border-white/10 text-sm text-zinc-400">
-                Workspace initialized. Your custom **Ignite-AI** model is active.
+        <div class="flex-1 px-8 pb-8">
+            <div class="h-full rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)] bg-black">
+                <iframe src="https://normalpurpose3-test.hf.space?__theme=dark"></iframe>
             </div>
         </div>
-
-        <div class="glass p-3 rounded-[2rem] flex items-center gap-3 border-white/10 shadow-2xl">
-            <input type="text" id="user-input" placeholder="Message Ignite Pro..." 
-                class="flex-1 bg-transparent border-none px-4 py-3 outline-none text-white placeholder-zinc-500 text-sm">
-            <button onclick="sendMessage()" class="ignite-gradient w-12 h-12 rounded-2xl flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-orange-600/20">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-            </button>
-        </div>
-    </div>
-    <script src="script.js"></script>
+    </main>
 </body>
 </html>
