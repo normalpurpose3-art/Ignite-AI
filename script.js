@@ -19,7 +19,7 @@ async function sendMessage() {
         // Calling the API (Replace TOKEN_HERE with your secret token if pasting directly)
         const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
             headers: { 
-                "Authorization": `Bearer ${window.localStorage.getItem('HF_TOKEN') || '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'}`,
+                "Authorization": `Bearer ${window.localStorage.getItem('HF_TOKEN') || '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'}`,
                 "Content-Type": "application/json" 
             },
             method: "POST",
